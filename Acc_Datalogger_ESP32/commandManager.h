@@ -2,9 +2,11 @@
 #define SERIAL_COMMANDS_DEBUG
 
 int indx=0;
-int opMode=0; //inital state set to 1
-int prevMode=3;
-int total_time_to_sample=10000; //10s= 10000ms
+enum {MODE_NULL=0,MODE_SELECTOR=1, MODE_SHOT, MODE_MANUAL};
+int opMode=MODE_NULL; //inital state set to 1
+int prevMode=MODE_MANUAL;
+
+int total_time_to_sample=5000; //10s= 10000ms
 bool paramconfig=false;
 bool paramcalib=false;
 
@@ -83,7 +85,7 @@ void cmd_sensor(SerialCommands* sender)
     if(indx == 1 &&  (strcmp(paramstr,"MODE")==0 || strcmp(paramstr,"mode")==0))
     {
       //mode for sensor
-      opMode = 1;
+      opMode = MODE_SELECTOR;
     }
     if(indx == 2 && paramconfig)
     {
@@ -92,17 +94,17 @@ void cmd_sensor(SerialCommands* sender)
       Serial.printf("total time to sample: %d milliSeconds\n", total_time_to_sample);
       sender->GetSerial()->printf("total time to sample: %d milliSeconds\n", total_time_to_sample);
     }
-    if(indx == 2 && opMode == 1)
+    if(indx == 2 && opMode == MODE_SELECTOR)
     {
       //total_time_to_sample value
       if(strcmp(paramstr,"shot")==0 || strcmp(paramstr,"SHOT")==0)
       {
-        opMode = 2;//how do we make sure the value is only numeric?
+        opMode = MODE_SHOT;//how do we make sure the value is only numeric?
         Serial.println("single shot sampling");
         sender->GetSerial()->println("single shot sampling");
       }else if(strcmp(paramstr,"manual")==0 || strcmp(paramstr,"MANUAL")==0)
       {
-        opMode = 3;//how do we make sure the value is only numeric?
+        opMode = MODE_MANUAL;//how do we make sure the value is only numeric?
         Serial.println("manual start stop mode selected");
         sender->GetSerial()->println("manual start stop mode selected");
       }

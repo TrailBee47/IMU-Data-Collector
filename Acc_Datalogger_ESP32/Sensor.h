@@ -20,10 +20,10 @@ typedef struct mpuData{
 mpuData_t dataAccGyr{ .idx=0};
 mpuData_t dataReadAccGyr;
 
-#define BUFFER_SIZE (42*10)
+#define BUFFER_SIZE (42*1)
 RingBuf<mpuData_t, BUFFER_SIZE> myBuffer;
 
-int SAMPLE_DIV = 4;
+int SAMPLE_DIV = 39;
 
 /* There are several ways to create your MPU9250 object:
  * MPU9250_WE myMPU9250 = MPU9250_WE()              -> uses Wire / I2C Address = 0x68
@@ -249,43 +249,7 @@ void runSensor()
   myMPU9250.startFifo(MPU9250_FIFO_ACC_GYR);
   unsigned long int startstartTime= millis();
   while(!fifoFull){
-      if(!myBuffer.isEmpty())
-      {
-       myBuffer.pop(dataReadAccGyr); 
-       if(printData){
-//          Serial.print("Data set ");
-//          Serial.print(i+1);
-//          Serial.println(":");
-//          SerialBT.print("Data set ");
-//          SerialBT.print(i+1);
-//          SerialBT.println(":");
-    
-          Serial.printf("[%ld] ",(dataReadAccGyr.idx));
-          Serial.print(dataReadAccGyr.acc.x);
-          Serial.print("   ");
-          Serial.print(dataReadAccGyr.acc.y);
-          Serial.print("   ");
-          Serial.print(dataReadAccGyr.acc.z);
-          Serial.print("   ");
-          SerialBT.print(dataReadAccGyr.acc.x);
-          SerialBT.print("   ");
-          SerialBT.print(dataReadAccGyr.acc.y);
-          SerialBT.print("   ");
-          SerialBT.print(dataReadAccGyr.acc.z);
-          SerialBT.print("   ");
-          
-          Serial.print(dataReadAccGyr.gyr.x);
-          Serial.print("   ");
-          Serial.print(dataReadAccGyr.gyr.y);
-          Serial.print("   ");
-          Serial.println(dataReadAccGyr.gyr.z);
-          SerialBT.print(dataReadAccGyr.gyr.x);
-          SerialBT.print("   ");
-          SerialBT.print(dataReadAccGyr.gyr.y);
-          SerialBT.print("   ");
-          SerialBT.println(dataReadAccGyr.gyr.z);
-        }
-      }
+     vTaskDelay(1);
     }
   unsigned long int startTime= millis();
   myMPU9250.stopFifo();
@@ -296,4 +260,45 @@ void runSensor()
 //  while(!(Serial.available())){}
 //  Serial.read();
 //  Serial.println(); 
+}
+
+void printDataToSerial()
+{    
+ while( myBuffer.pop(dataReadAccGyr) )
+ { 
+   if(printData)
+   {
+//          Serial.print("Data set ");
+//          Serial.print(i+1);
+//          Serial.println(":");
+//          SerialBT.print("Data set ");
+//          SerialBT.print(i+1);
+//          SerialBT.println(":");
+    
+      Serial.printf("[%ld] ",(dataReadAccGyr.idx));
+      Serial.print(dataReadAccGyr.acc.x);
+      Serial.print("   ");
+      Serial.print(dataReadAccGyr.acc.y);
+      Serial.print("   ");
+      Serial.print(dataReadAccGyr.acc.z);
+      Serial.print("   ");
+      SerialBT.print(dataReadAccGyr.acc.x);
+      SerialBT.print("   ");
+      SerialBT.print(dataReadAccGyr.acc.y);
+      SerialBT.print("   ");
+      SerialBT.print(dataReadAccGyr.acc.z);
+      SerialBT.print("   ");
+      
+      Serial.print(dataReadAccGyr.gyr.x);
+      Serial.print("   ");
+      Serial.print(dataReadAccGyr.gyr.y);
+      Serial.print("   ");
+      Serial.println(dataReadAccGyr.gyr.z);
+      SerialBT.print(dataReadAccGyr.gyr.x);
+      SerialBT.print("   ");
+      SerialBT.print(dataReadAccGyr.gyr.y);
+      SerialBT.print("   ");
+      SerialBT.println(dataReadAccGyr.gyr.z);
+    }
+ }
 }

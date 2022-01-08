@@ -12,7 +12,7 @@ int16_t indxx=0;
 
 void BTsetup()
 {
-  Serial.println("LOG: BTsetup\n");
+  Serial.println(" BTsetup\n");
   String mac = WiFi.macAddress();
   String nameDev="DICE-"+mac;
   SerialBT.begin(nameDev); //Bluetooth device name
